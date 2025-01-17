@@ -48,6 +48,7 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.generate_pb.clicked.connect(self.generate)
         self.ui.wl_listWidget.doubleClicked.connect(self.add_list_word)
         self.ui.solution_rmv_pb.clicked.connect(self.rmv_sol_word)
+        self.ui.solution_add_pb.clicked.connect(self.add_word)
 
         self.cnx = self.mysql_initialize(self)
 
@@ -165,6 +166,26 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.wl_listWidget.addItems([x[0] for x in ol])
         print(ol)
 
+    def add_word(self):
+        word = self.ui.solution_add_lineEdit.text().upper()
+        print(word)
+        if word:
+            self.words.append(word)
+            self.ui.solution_label.setText("Solution: " + self.build_sol_str(self.words))
+            self.update_letterbox_color()
+            tmp = []
+            for w in self.word_list:
+                wu = w.upper()
+                if word[-1] == wu[0]:
+                    tmp.append(w)
+
+            ol = [(s, self.unchecked_letters_count(s.upper())) for s in tmp]
+            ol.sort(key=cmp_to_key(compare_func))
+            ol.reverse()
+            self.ui.wl_listWidget.clear()
+            self.ui.wl_listWidget.addItems([x[0] for x in ol])
+
+
     def rmv_sol_word(self):
         if not self.words:
             return
@@ -210,105 +231,87 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
     def update_letterbox_color(self):
         str = self.build_sol_str(self.words)
         self.uc_letters = ""
+
+        palg = self.ui.gb1_comboBox_A.palette()
+        palw = self.ui.gb1_comboBox_B.palette()
+        palg.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+        palw.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+
         # GROUP1
-        pal = self.ui.gb1_comboBox_A.palette()
         if self.alpha[self.ui.gb1_comboBox_A.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb1_comboBox_A.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb1_comboBox_A.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb1_comboBox_A.currentIndex()]
-        self.ui.gb1_comboBox_A.setPalette(pal)
 
-        pal = self.ui.gb1_comboBox_B.palette()
         if self.alpha[self.ui.gb1_comboBox_B.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb1_comboBox_B.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb1_comboBox_B.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb1_comboBox_B.currentIndex()]
-        self.ui.gb1_comboBox_B.setPalette(pal)
 
-        pal = self.ui.gb1_comboBox_C.palette()
         if self.alpha[self.ui.gb1_comboBox_C.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb1_comboBox_C.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb1_comboBox_C.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb1_comboBox_C.currentIndex()]
-        self.ui.gb1_comboBox_C.setPalette(pal)
 
         # GROUP2
-        pal = self.ui.gb2_comboBox_A.palette()
         if self.alpha[self.ui.gb2_comboBox_A.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb2_comboBox_A.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb2_comboBox_A.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb2_comboBox_A.currentIndex()]
-        self.ui.gb2_comboBox_A.setPalette(pal)
 
-        pal = self.ui.gb2_comboBox_B.palette()
         if self.alpha[self.ui.gb2_comboBox_B.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb2_comboBox_B.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb2_comboBox_B.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb2_comboBox_B.currentIndex()]
-        self.ui.gb2_comboBox_B.setPalette(pal)
 
-        pal = self.ui.gb2_comboBox_C.palette()
         if self.alpha[self.ui.gb2_comboBox_C.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb2_comboBox_C.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb2_comboBox_C.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb2_comboBox_C.currentIndex()]
-        self.ui.gb2_comboBox_C.setPalette(pal)
 
         # GROUP3
-        pal = self.ui.gb3_comboBox_A.palette()
         if self.alpha[self.ui.gb3_comboBox_A.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb3_comboBox_A.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb3_comboBox_A.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb3_comboBox_A.currentIndex()]
-        self.ui.gb3_comboBox_A.setPalette(pal)
 
-        pal = self.ui.gb3_comboBox_B.palette()
         if self.alpha[self.ui.gb3_comboBox_B.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb3_comboBox_B.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb3_comboBox_B.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb3_comboBox_B.currentIndex()]
-        self.ui.gb3_comboBox_B.setPalette(pal)
 
-        pal = self.ui.gb3_comboBox_C.palette()
         if self.alpha[self.ui.gb3_comboBox_C.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb3_comboBox_C.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb3_comboBox_C.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb3_comboBox_C.currentIndex()]
-        self.ui.gb3_comboBox_C.setPalette(pal)
 
         # GROUP4
-        pal = self.ui.gb4_comboBox_A.palette()
         if self.alpha[self.ui.gb4_comboBox_A.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb4_comboBox_A.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb4_comboBox_A.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb4_comboBox_A.currentIndex()]
-        self.ui.gb4_comboBox_A.setPalette(pal)
 
-        pal = self.ui.gb4_comboBox_B.palette()
         if self.alpha[self.ui.gb4_comboBox_B.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb4_comboBox_B.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb4_comboBox_B.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb4_comboBox_B.currentIndex()]
-        self.ui.gb4_comboBox_B.setPalette(pal)
 
-        pal = self.ui.gb4_comboBox_C.palette()
         if self.alpha[self.ui.gb4_comboBox_C.currentIndex()] in str:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(0, 255, 0))
+            self.ui.gb4_comboBox_C.setPalette(palg)
         else:
-            pal.setColor(QtGui.QPalette.Button, QtGui.QColor(255, 255, 255))
+            self.ui.gb4_comboBox_C.setPalette(palw)
             self.uc_letters += self.alpha[self.ui.gb4_comboBox_C.currentIndex()]
-        self.ui.gb4_comboBox_C.setPalette(pal)
 
     @staticmethod
     def mysql_initialize(self):
