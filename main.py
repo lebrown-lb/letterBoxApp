@@ -318,7 +318,7 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             cx = mysql.connector.connect(user='lebrown', password='mydbPass1990',
                                          host='localhost',
-                                         database='wn_pro_mysql')
+                                         database='mydb')
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -334,7 +334,7 @@ class Main(QtWidgets.QMainWindow, Ui_MainWindow):
         return cx
 
     def mysql_query(self, str):
-        q = "SELECT word FROM `wn_synset` WHERE upper(word) NOT LIKE '%{}%'".format(str[0])
+        q = "SELECT word FROM `eng_dictionary` WHERE upper(word) NOT LIKE '%{}%'".format(str[0])
 
         for c in str[1:]:
             q += " AND upper(word) NOT LIKE '%{}%'".format(c)
